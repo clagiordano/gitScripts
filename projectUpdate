@@ -21,29 +21,7 @@ BASEDIR="";
 
 #. read_ini.sh
 
-function error()
-{
-    echo -e "[ \033[1;31mKO\033[0m ]: $1";
-}
-
-function success()
-{
-    echo -e "[ \033[1;32mOK\033[0m ]: $1";
-}
-
-function skip()
-{
-    echo -e "[\033[1;33mSKIP\033[0m]: $1";
-}
-
-function debug()
-{
-    #if [ ${DEBUG_MODE} == "true" ]
-    #then
-        #echo -e "[\033[0;35mDEBUG\033[0m      ]: \033[0;35m$1\033[0m" 1>&2;  # Redirige lo stdout su stderr
-        echo -e "\033[1;35m[ ?? ]: $1\033[0m"; # 1>&2;  # Redirige lo stdout su stderr
-    #fi
-}
+. functions.sh
 
 if [ $# -eq 0 ]
 then
