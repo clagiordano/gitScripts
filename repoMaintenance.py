@@ -32,16 +32,15 @@ class repoMaintenance(object):
     def __isRepo(self, path):
         try:
             repo = Repo(path)
-            repo.head
             return True
         except:
             return False
-        # print(repo.head)
 
     def run(self):
         repos = self.__getRepositories()
         for repo in repos:
-            print("Analyzing repoitory %s... %s" % (repo, ("OK", "SKIPPED")[self.__isRepo(repo)]))
+            print("[%10s]: Analyzing repoitory %s..."
+                % ( ("SKIPPED", "OK")[self.__isRepo(os.path.join(self.args.sourceDir, repo))], repo))
 
         # print(repos, len(repos))
 
