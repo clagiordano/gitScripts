@@ -4,7 +4,7 @@
 from argparse import ArgumentParser
 import os
 import sys
-from git import Repo
+from git import Git, Repo
 
 
 class repoMaintenance(object):
@@ -13,8 +13,6 @@ class repoMaintenance(object):
     def __init__(self):
         self.__setupArgParser()
         self.__validateArgs()
-
-        # print("sourceDir: %s" % self.args.sourceDir)
 
     def __setupArgParser(self):
         parser = ArgumentParser()
@@ -31,13 +29,13 @@ class repoMaintenance(object):
 
     def __getRepositories(self):
         dirs = {}
-        for dir in os.listdir(self.args.sourceDir):
+        for dir in sorted(os.listdir(self.args.sourceDir)):
             dirPath = os.path.join(self.args.sourceDir, dir)
             if os.path.isdir(dirPath):
                 if self.__isRepo(dirPath):
                     dirs[dir] = dirPath
 
-        return sorted(dirs)
+        return dirs
 
     def __isRepo(self, path):
         try:
@@ -46,10 +44,19 @@ class repoMaintenance(object):
         except:
             return False
 
+    def __isRepoByFolder(self, path):
+        gitDir = os.path.join(path, '.git')
+        if os.path.exists(gitDir):
+            if os.path.isdir(gitDir):
+                return True
+
+        return False
+
     def run(self):
         repos = self.__getRepositories()
-        for repo in repos:
-            print("Analyzing repoitory %s..." % repo)
+        print(repos)
+        for repo, path in repos.items():
+            print("Analyzing repoitory %s ..." % (repo))
             # print("[%10s]: Analyzing repoitory %s..."
             #       % (("SKIPPED", "OK")[self.__isRepo(os.path.join(self.args.sourceDir, repo))], repo))
 
