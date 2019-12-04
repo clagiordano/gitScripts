@@ -37,7 +37,7 @@ class repoMaintenance(object):
                 if self.__isRepo(dirPath):
                     dirs[dir] = dirPath
 
-        return dirs
+        return sorted(dirs)
 
     def __isRepo(self, path):
         try:
