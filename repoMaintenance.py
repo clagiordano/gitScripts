@@ -14,7 +14,7 @@ class repoMaintenance(object):
         self.__setupArgParser()
         self.__validateArgs()
 
-        print("sourceDir: %s" % self.args.sourceDir)
+        # print("sourceDir: %s" % self.args.sourceDir)
 
     def __setupArgParser(self):
         parser = ArgumentParser()
@@ -30,11 +30,18 @@ class repoMaintenance(object):
             sys.exit(1)
 
     def __getRepositories(self):
-        return os.listdir(self.args.sourceDir)
+        dirs = {}
+        for dir in os.listdir(self.args.sourceDir):
+            dirPath = os.path.join(self.args.sourceDir, dir)
+            if os.path.isdir(dirPath):
+                if self.__isRepo(dirPath):
+                    dirs[dir] = dirPath
+
+        return dirs
 
     def __isRepo(self, path):
         try:
-            repo = Repo(path)
+            Repo(path)
             return True
         except:
             return False
@@ -42,8 +49,9 @@ class repoMaintenance(object):
     def run(self):
         repos = self.__getRepositories()
         for repo in repos:
-            print("[%10s]: Analyzing repoitory %s..."
-                  % (("SKIPPED", "OK")[self.__isRepo(os.path.join(self.args.sourceDir, repo))], repo))
+            print("Analyzing repoitory %s..." % repo)
+            # print("[%10s]: Analyzing repoitory %s..."
+            #       % (("SKIPPED", "OK")[self.__isRepo(os.path.join(self.args.sourceDir, repo))], repo))
 
         # print(repos, len(repos))
 
