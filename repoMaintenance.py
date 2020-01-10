@@ -5,10 +5,15 @@ from argparse import ArgumentParser
 import os
 import sys
 from git import Git, Repo
-
+from subprocess import Popen, run
 
 class repoMaintenance(object):
     args = None
+    stats = {
+        'repoCount': 0,
+        'totalSize': 0,
+        'freedSpace': 0
+    }
 
     def __init__(self):
         self.__setupArgParser()
@@ -49,18 +54,34 @@ class repoMaintenance(object):
         if os.path.exists(gitDir):
             if os.path.isdir(gitDir):
                 return True
-
         return False
+
+    def __doMaintenance(self, path):
+        os.chdir(path)
+
+        Popen(["git", "fetch"])
+        Popen(["git", "pull", "origin"])
+
+        proc = run(["du", "-s"], capture_output=True)
+        # repoSize = int(os.popen("du -s").read().strip())
+        # repoSize, err = proc.communicate()
+
+        # print(str(proc.stdout))
+        # sys.exit(1)
+
+        self.stats['repoCount'] += 1
+        # self.stats['totalSize'] += repoSize
+        # print(cmd)
 
     def run(self):
         repos = self.__getRepositories()
-        print(repos)
+        # print(repos)
         for repo, path in repos.items():
             print("Analyzing repoitory %s ..." % (repo))
-            # print("[%10s]: Analyzing repoitory %s..."
-            #       % (("SKIPPED", "OK")[self.__isRepo(os.path.join(self.args.sourceDir, repo))], repo))
-
+            self.__doMaintenance(path)
         # print(repos, len(repos))
+
+        print(self.stats)
 
 
 if __name__ == '__main__':
