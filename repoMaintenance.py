@@ -59,18 +59,19 @@ class repoMaintenance(object):
     def __doMaintenance(self, path):
         os.chdir(path)
 
-        Popen(["git", "fetch"])
-        Popen(["git", "pull", "origin"])
+        self.stats['repoCount'] += 1
 
         proc = run(["du", "-s"], capture_output=True)
-        # repoSize = int(os.popen("du -s").read().strip())
-        # repoSize, err = proc.communicate()
+        repoSize = int(proc.stdout.decode('utf-8').split()[0])
+        self.stats['totalSize'] += repoSize
 
-        # print(str(proc.stdout))
-        # sys.exit(1)
+        proc = run(["git", "gc"], capture_output=True)
 
-        self.stats['repoCount'] += 1
-        # self.stats['totalSize'] += repoSize
+        proc = run(["du", "-s"], capture_output=True)
+        newRepoSize = int(proc.stdout.decode('utf-8').split()[0])
+        self.stats['freedSpace'] += (repoSize - newRepoSize)
+
+
         # print(cmd)
 
     def run(self):
